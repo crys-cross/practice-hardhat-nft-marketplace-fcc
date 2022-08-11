@@ -1,10 +1,11 @@
-import "@typechain/hardhat"
-import "@nomiclabs/hardhat-waffle"
-import "@nomiclabs/hardhat-etherscan"
-import "@nomiclabs/hardhat-ethers"
+// import "@typechain/hardhat"//a
+// import "@nomiclabs/hardhat-waffle"//a
+// import "@nomiclabs/hardhat-etherscan"//a
+// import "@nomiclabs/hardhat-ethers"//a
+// import "solidity-coverage"//a
+// import "hardhat-gas-reporter"//a
+import "@nomicfoundation/hardhat-toolbox"
 import "hardhat-deploy"
-import "solidity-coverage"
-import "hardhat-gas-reporter"
 import "hardhat-contract-sizer"
 import "dotenv/config"
 import { HardhatUserConfig } from "hardhat/config"
@@ -19,7 +20,6 @@ const config: HardhatUserConfig = {
     solidity: {
         compilers: [{ version: "0.8.7" }, { version: "0.6.6" }],
     },
-    defaultNetwork: "hardhat",
     networks: {
         hardhat: {
             chainId: 31337,
