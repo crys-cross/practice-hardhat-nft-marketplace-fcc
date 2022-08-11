@@ -53,7 +53,7 @@ contract NftMarketplace is ReentrancyGuard {
     ) {
         Listing memory listing = s_listings[nftAddress][tokenId];
         if (listing.price > 0) {
-            revert AlreadyListed(nftAddress, tokenId);
+            revert NftMarketplace__AlreadyListed(nftAddress, tokenId);
         }
         _;
     }
@@ -61,7 +61,7 @@ contract NftMarketplace is ReentrancyGuard {
     modifier isListed(address nftAddress, uint256 tokenId) {
         Listing memory listing = s_listings[nftAddress][tokenId];
         if (listing.price <= 0) {
-            revert NotListed(nftAddress, tokenId);
+            revert NftMarketplace__NotListed(nftAddress, tokenId);
         }
         _;
     }
@@ -74,7 +74,7 @@ contract NftMarketplace is ReentrancyGuard {
         IERC721 nft = IERC721(nftAddress);
         address owner = nft.ownerOf(tokenId);
         if (spender != owner) {
-            revert NotOwner();
+            revert NftMarketplace__NotOwner();
         }
         _;
     }
@@ -92,11 +92,11 @@ contract NftMarketplace is ReentrancyGuard {
         uint256 price
     ) external notListed(nftAddress, tokenId, msg.sender) isOwner(nftAddress, tokenId, msg.sender) {
         if (price <= 0) {
-            revert PriceMustBeAboveZero();
+            revert NftMarketplace__PriceMustBeAboveZero();
         }
         IERC721 nft = IERC721(nftAddress);
         if (nft.getApproved(tokenId) != address(this)) {
-            revert NotApprovedForMarketplace();
+            revert NftMarketplace__NotApprovedForMarketplace();
         }
         s_listings[nftAddress][tokenId] = Listing(price, msg.sender);
         emit ItemListed(msg.sender, nftAddress, tokenId, price);
@@ -140,7 +140,7 @@ contract NftMarketplace is ReentrancyGuard {
         // 3. Tweet me @PatrickAlphaC if you come up with a solution!
         Listing memory listedItem = s_listings[nftAddress][tokenId];
         if (msg.value < listedItem.price) {
-            revert PriceNotMet(nftAddress, tokenId, listedItem.price);
+            revert NftMarketplace__PriceNotMet(nftAddress, tokenId, listedItem.price);
         }
         s_proceeds[listedItem.seller] += msg.value;
         // Could just send the money...
@@ -173,7 +173,7 @@ contract NftMarketplace is ReentrancyGuard {
     function withdrawProceeds() external {
         uint256 proceeds = s_proceeds[msg.sender];
         if (proceeds <= 0) {
-            revert NoProceeds();
+            revert NftMarketplace__NoProceeds();
         }
         s_proceeds[msg.sender] = 0;
         (bool success, ) = payable(msg.sender).call{value: proceeds}("");
