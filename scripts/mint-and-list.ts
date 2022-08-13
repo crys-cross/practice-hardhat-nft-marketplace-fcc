@@ -1,6 +1,8 @@
-import { ethers } from "hardhat"
+import { ethers, network } from "hardhat"
+import { moveBlocks } from "../utils/move-blocks"
 
 const PRICE = ethers.utils.parseEther("0.1")
+const sleepAmount = 1000
 
 const mintAndList = async () => {
     const nftMarketplace = await ethers.getContract("NftMarketplace")
@@ -17,6 +19,11 @@ const mintAndList = async () => {
     const tx = await nftMarketplace.listItem(basicNft.address, tokenId, PRICE)
     await tx.wait(1)
     console.log("Listed!")
+
+    if (network.config.chainId == 31337) {
+        // Moralis has a hard time if you move more than 1 at once!
+        await moveBlocks(1, sleepAmount)
+    }
 }
 
 mintAndList()
