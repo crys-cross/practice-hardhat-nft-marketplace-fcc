@@ -4,7 +4,9 @@ import { DeployFunction } from "hardhat-deploy/types"
 
 const frontEndContractsFile =
     "../practice-nextjs-nft-marketplace-moralis-fcc/constants/networkMapping.json"
-const frontEndAbiFile = "../practice-nextjs-nft-marketplace-moralis-fcc/constants/"
+const frontEndAbiFile0 =
+    "../practice-nextjs-nft-marketplace-moralis-fcc/constants/NftMarketplace.json"
+const frontEndAbiFile1 = "../practice-nextjs-nft-marketplace-moralis-fcc/constants/BasicNft.json"
 
 const updateUI: DeployFunction = async () => {
     if (process.env.UPDATE_FRONT_END) {
@@ -31,13 +33,13 @@ const updateContractAddresses = async () => {
 const updateAbi = async () => {
     const nftMarketplace = await ethers.getContract("NftMarketplace")
     fs.writeFileSync(
-        "${frontEndAbiFile}NftMarketplace.json",
+        frontEndAbiFile0,
         nftMarketplace.interface.format(ethers.utils.FormatTypes.json).toString()
     )
 
     const basicNft = await ethers.getContract("BasicNft")
     fs.writeFileSync(
-        "${frontEndAbiFile}BasicNft.json",
+        frontEndAbiFile1,
         basicNft.interface.format(ethers.utils.FormatTypes.json).toString()
     )
     console.log("ABI written!")
