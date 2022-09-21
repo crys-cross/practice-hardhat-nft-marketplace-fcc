@@ -1,14 +1,17 @@
+import "dotenv/config"
 import fs from "fs"
 import { ethers, network } from "hardhat"
 import { DeployFunction } from "hardhat-deploy/types"
+import { HardhatRuntimeEnvironment } from "hardhat/types"
 
 const frontEndContractsFile =
     "../practice-nextjs-nft-marketplace-moralis-fcc/constants/networkMapping.json"
-const frontEndAbiFile0 =
-    "../practice-nextjs-nft-marketplace-moralis-fcc/constants/NftMarketplace.json"
-const frontEndAbiFile1 = "../practice-nextjs-nft-marketplace-moralis-fcc/constants/BasicNft.json"
+const frontEndContractsFile2 =
+    "../practice-nextjs-nft-marketplace-thegraph-fcc/constants/networkMapping.json"
+const frontEndAbiFile0 = "../practice-nextjs-nft-marketplace-moralis-fcc/constants/"
+const frontEndAbiFile1 = "../practice-nextjs-nft-marketplace-thegraph-fcc/constants/"
 
-const updateUI: DeployFunction = async () => {
+const updateUI: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     if (process.env.UPDATE_FRONT_END) {
         console.log("Updating Front End")
         updateContractAddresses()
@@ -28,22 +31,31 @@ const updateContractAddresses = async () => {
         currentAddresses[chainId] = { NftMarketplace: [nftMarketplace.address] }
     }
     fs.writeFileSync(frontEndContractsFile, JSON.stringify(currentAddresses))
+    fs.writeFileSync(frontEndContractsFile2, JSON.stringify(currentAddresses))
     console.log("Addresses written!")
 }
 const updateAbi = async () => {
     const nftMarketplace = await ethers.getContract("NftMarketplace")
     fs.writeFileSync(
-        frontEndAbiFile0,
+        `${frontEndAbiFile0}NftMarketplace.json`,
+        nftMarketplace.interface.format(ethers.utils.FormatTypes.json).toString()
+    )
+    fs.writeFileSync(
+        `${frontEndAbiFile1}NftMarketplace.json`,
         nftMarketplace.interface.format(ethers.utils.FormatTypes.json).toString()
     )
 
     const basicNft = await ethers.getContract("BasicNft")
     fs.writeFileSync(
-        frontEndAbiFile1,
+        `${frontEndAbiFile0}BasicNft.json`,
+        basicNft.interface.format(ethers.utils.FormatTypes.json).toString()
+    )
+    fs.writeFileSync(
+        `${frontEndAbiFile1}BasicNft.json`,
         basicNft.interface.format(ethers.utils.FormatTypes.json).toString()
     )
     console.log("ABI written!")
 }
 
 export default updateUI
-updateUI.tags = ["all", "frontend"]
+updateUI.tags = ["all", "frontend", "deploy"]
